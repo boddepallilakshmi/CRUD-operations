@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Custom styles for the form border */
+        .form-container {
+            border: 1px solid #007bff; /* Blue border */
+            border-radius: 5px;
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f8f9fa; /* Light gray background */
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="mb-4">Update User</h2>
+        <div class="form-container">
+            <form id="userForm">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender:</label>
+                    <input type="text" class="form-control" id="gender" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" class="form-control">
+                        <option value="Active">Active</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <button type="button" class="btn btn-primary" onclick="updateUser()">Save</button>
+                <button type="button" class="btn btn-secondary" onclick="redirectToUsers()">Back to Users</button>
+
+                
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const userId = new URLSearchParams(window.location.search).get('id');
+
+        async function fetchUser() {
+            const response = await fetch(`/api/users/updateUser/${userId}`);
+            const user = await response.json();
+            document.getElementById('name').value = user.name;
+            document.getElementById('email').value = user.email;
+            document.getElementById('gender').value = user.gender;
+            document.getElementById('status').value = user.status;
+        }
+
+        async function updateUser() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const gender = document.getElementById('gender').value;
+            const status = document.getElementById('status').value;
+
+            const response = await fetch(`/api/users/updateUser/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, gender, status })
+            });
+            const result = await response.json();
+            alert(result.message);
+            window.location.href = 'displayUsers.html'; // Redirect to user list after update
+        }
+
+        window.onload = fetchUser;
+        function redirectToUsers() {
+                    window.location.href = 'displayUsers.html';
+                }
+    </script>
+
+    <!-- Bootstrap JS and dependencies (optional) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
